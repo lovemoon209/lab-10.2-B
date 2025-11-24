@@ -1,0 +1,75 @@
+#include "lab102bstud.h"
+#include <gtest/gtest.h>
+#include <vector>
+using namespace std;
+
+TEST(ProfileTest, CorrectProfileCS) {
+  Student s{1, "A", 1, CS, 5, 5, {.programming = 9}};
+  EXPECT_EQ(profile(s), 9);
+}
+
+TEST(ProfileTest, CorrectProfileINF) {
+  Student s{1, "A", 1, INF, 5, 5, {.numerical = 7}};
+  EXPECT_EQ(profile(s), 7);
+}
+
+TEST(ProfileTest, CorrectProfileOther) {
+  Student s{1, "A", 1, PI, 5, 5, {.pedagogy = 4}};
+  EXPECT_EQ(profile(s), 4);
+}
+
+TEST(SortTest, PhysicalSortOrder) {
+  vector<Student> s = {{1, "B", 3, CS, 5, 5, {.programming = 4}},
+                       {2, "A", 2, INF, 4, 4, {.numerical = 5}},
+                       {3, "C", 1, PI, 3, 3, {.pedagogy = 5}},
+                       {4, "D", 1, CS, 5, 5, {.programming = 5}}};
+
+  sortPhysical(s);
+
+  EXPECT_EQ(s[0].surname, "D");
+  EXPECT_EQ(s[1].surname, "C");
+  EXPECT_EQ(s[2].surname, "A");
+  EXPECT_EQ(s[3].surname, "B");
+}
+
+TEST(BinarySearchTest, FoundCorrect) {
+  vector<Student> s = {
+      {1, "Z", 3, CS, 5, 5, {.programming = 5}},
+      {2, "Petrenko", 3, CS, 4, 4, {.programming = 4}},
+      {3, "A", 1, PI, 3, 3, {.pedagogy = 3}},
+  };
+
+  sortPhysical(s);
+
+  int pos = binarySearch(s, "Petrenko", 3, 4);
+  EXPECT_NE(pos, -1);
+  EXPECT_EQ(s[pos].surname, "Petrenko");
+}
+
+TEST(BinarySearchTest, NotFound) {
+  vector<Student> s = {
+      {1, "X", 1, CS, 5, 5, {.programming = 5}},
+      {2, "Y", 2, PI, 4, 4, {.pedagogy = 4}},
+  };
+
+  sortPhysical(s);
+
+  int pos = binarySearch(s, "NotExist", 1, 5);
+  EXPECT_EQ(pos, -1);
+}
+TEST(UnionTest, OnlyOneFieldActive) {
+  Student s{1, "A", 1, CS, 5, 5, {.programming = 10}};
+  EXPECT_EQ(s.prof.programming, 10);
+
+  s.prof.numerical = 7;
+  EXPECT_EQ(s.prof.numerical, 7);
+  EXPECT_NE(s.prof.programming, 10);
+
+  s.prof.pedagogy = 3;
+  EXPECT_EQ(s.prof.pedagogy, 3);
+}
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
